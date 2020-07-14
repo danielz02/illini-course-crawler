@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:ns2="http://rest.cis.illinois.edu">
+    <xs:import namespace="http://rest.cis.illinois.edu" schemaLocation="ns2.xsd"/>
+    <xs:element name="collegeCode" type="xs:NCName"/>
+    <xs:element name="departmentCode" type="xs:integer"/>
+    <xs:element name="unitName" type="xs:string"/>
+    <xs:element name="contactName" type="xs:string"/>
+    <xs:element name="contactTitle" type="xs:string"/>
+    <xs:element name="addressLine1" type="xs:string"/>
+    <xs:element name="addressLine2" type="xs:string"/>
+    <xs:element name="phoneNumber" type="xs:NMTOKEN"/>
+    <xs:element name="webSiteURL" type="xs:NCName"/>
+    <xs:element name="collegeDepartmentDescription" type="xs:string"/>
+    <xs:element name="cascadingCourses">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="cascadingCourse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cascadingCourse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="parents"/>
+                <xs:element ref="label"/>
+                <xs:element ref="description"/>
+                <xs:element ref="creditHours"/>
+                <xs:element minOccurs="0" ref="courseSectionInformation"/>
+                <xs:element minOccurs="0" ref="sectionRegistrationNotes"/>
+                <xs:element minOccurs="0" ref="sectionDegreeAttributes"/>
+                <xs:element minOccurs="0" ref="classScheduleInformation"/>
+                <xs:element minOccurs="0" ref="sectionCappArea"/>
+                <xs:element minOccurs="0" ref="sectionApprovalCode"/>
+                <xs:element minOccurs="0" ref="genEdCategories"/>
+                <xs:element ref="detailedSections"/>
+            </xs:sequence>
+            <xs:attribute name="href" use="required" type="xs:anyURI"/>
+            <xs:attribute name="id" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="courseSectionInformation" type="xs:string"/>
+    <xs:element name="sectionRegistrationNotes" type="xs:string"/>
+    <xs:element name="sectionDegreeAttributes" type="xs:string"/>
+    <xs:element name="classScheduleInformation" type="xs:string"/>
+    <xs:element name="sectionApprovalCode" type="xs:string"/>
+    <xs:element name="genEdCategories">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="category"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="category">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="description"/>
+                <xs:element ref="ns2:genEdAttributes"/>
+            </xs:sequence>
+            <xs:attribute name="id" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="genEdAttribute">
+        <xs:complexType mixed="true">
+            <xs:attribute name="code" use="required" type="xs:NMTOKEN"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="detailedSections">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="detailedSection"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="detailedSection">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="parents"/>
+                <xs:element minOccurs="0" ref="sectionNumber"/>
+                <xs:element minOccurs="0" ref="sectionTitle"/>
+                <xs:element minOccurs="0" ref="creditHours"/>
+                <xs:element ref="statusCode"/>
+                <xs:element minOccurs="0" ref="sectionText"/>
+                <xs:element minOccurs="0" ref="sectionNotes"/>
+                <xs:element minOccurs="0" ref="sectionCappArea"/>
+                <xs:element ref="partOfTerm"/>
+                <xs:element ref="sectionStatusCode"/>
+                <xs:element ref="enrollmentStatus"/>
+                <xs:element ref="startDate"/>
+                <xs:element ref="endDate"/>
+                <xs:element minOccurs="0" ref="specialApproval"/>
+                <xs:element ref="meetings"/>
+            </xs:sequence>
+            <xs:attribute name="href" use="required" type="xs:anyURI"/>
+            <xs:attribute name="id" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="sectionNumber" type="xs:NMTOKEN"/>
+    <xs:element name="sectionTitle" type="xs:string"/>
+    <xs:element name="statusCode" type="xs:NCName"/>
+    <xs:element name="sectionText" type="xs:string"/>
+    <xs:element name="sectionNotes" type="xs:string"/>
+    <xs:element name="partOfTerm" type="xs:integer"/>
+    <xs:element name="sectionStatusCode" type="xs:NCName"/>
+    <xs:element name="enrollmentStatus" type="xs:string"/>
+    <xs:element name="startDate" type="xs:NMTOKEN"/>
+    <xs:element name="endDate" type="xs:NMTOKEN"/>
+    <xs:element name="specialApproval" type="xs:string"/>
+    <xs:element name="meetings">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="meeting"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="meeting">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="type"/>
+                <xs:element ref="start"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="end"/>
+                    <xs:element ref="daysOfTheWeek"/>
+                </xs:sequence>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="roomNumber"/>
+                    <xs:element ref="buildingName"/>
+                </xs:sequence>
+                <xs:element ref="instructors"/>
+            </xs:sequence>
+            <xs:attribute name="id" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="type">
+        <xs:complexType mixed="true">
+            <xs:attribute name="code" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="start" type="xs:string"/>
+    <xs:element name="end" type="xs:string"/>
+    <xs:element name="daysOfTheWeek" type="xs:NCName"/>
+    <xs:element name="roomNumber" type="xs:NMTOKEN"/>
+    <xs:element name="buildingName" type="xs:string"/>
+    <xs:element name="instructors">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="instructor"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="instructor">
+        <xs:complexType mixed="true">
+            <xs:attribute name="firstName" use="required" type="xs:NCName"/>
+            <xs:attribute name="lastName" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="parents">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="calendarYear"/>
+                <xs:element ref="term"/>
+                <xs:element minOccurs="0" ref="subject"/>
+                <xs:element minOccurs="0" ref="course"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="calendarYear">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="href" use="required" type="xs:anyURI"/>
+                    <xs:attribute name="id" use="required" type="xs:integer"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="term">
+        <xs:complexType mixed="true">
+            <xs:attribute name="href" use="required" type="xs:anyURI"/>
+            <xs:attribute name="id" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="subject">
+        <xs:complexType mixed="true">
+            <xs:attribute name="href" use="required" type="xs:anyURI"/>
+            <xs:attribute name="id" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="course">
+        <xs:complexType mixed="true">
+            <xs:attribute name="href" use="required" type="xs:anyURI"/>
+            <xs:attribute name="id" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="label" type="xs:string"/>
+    <xs:element name="description" type="xs:string"/>
+    <xs:element name="creditHours" type="xs:string"/>
+    <xs:element name="sectionCappArea" type="xs:string"/>
+</xs:schema>

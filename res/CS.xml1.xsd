@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://rest.cis.illinois.edu" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="genEdAttributes" type="rest:genEdAttributesType" xmlns:rest="http://rest.cis.illinois.edu"/>
+  <xs:element name="subject" type="rest:subjectType" xmlns:rest="http://rest.cis.illinois.edu"/>
+  <xs:complexType name="genEdAttributesType">
+    <xs:sequence>
+      <xs:element ref="genEdAttribute"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="subjectType">
+    <xs:sequence>
+      <xs:element ref="parents"/>
+      <xs:element ref="label"/>
+      <xs:element ref="collegeCode"/>
+      <xs:element ref="departmentCode"/>
+      <xs:element ref="unitName"/>
+      <xs:element ref="contactName"/>
+      <xs:element ref="contactTitle"/>
+      <xs:element ref="addressLine1"/>
+      <xs:element ref="addressLine2"/>
+      <xs:element ref="phoneNumber"/>
+      <xs:element ref="webSiteURL"/>
+      <xs:element ref="collegeDepartmentDescription"/>
+      <xs:element ref="cascadingCourses"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="id"/>
+  </xs:complexType>
+</xs:schema>
