@@ -12,6 +12,9 @@ const xmlParserOption: X2jOptionsOptional = {
     trimValues: true,
 };
 
+/**
+ * Fetch the raw XML data of academic year and term information from Course Explorer and convert to Json Object.
+ */
 export const fetchYears = async () => {
     try {
         const termXml = await fetch("https://courses.illinois.edu/cisapp/explorer/schedule.xml?mode=summary");
@@ -22,7 +25,11 @@ export const fetchYears = async () => {
     }
 }
 
-export const parseYears = (years: XMLRoot): Array<TermDBRecord> => {
+/**
+ * Parse Course Explorer's XML response into DB records from root level to terms.
+ * @param years The Json Object converted from Course Explorer's XML response
+ */
+export const parseCalendarYears = (years: XMLRoot): Array<TermDBRecord> => {
     const calendarYearsArr = years.schedule.calendarYears.calendarYearSummary.map((year) => (
         year.terms.termDetail instanceof Array ? year.terms.termDetail : year.terms.termDetail
     ));
