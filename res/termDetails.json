@@ -1,0 +1,424 @@
+{
+    "termDetails": [
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2020/fall.xml",
+                "id": "120208",
+                "label": "Fall 2020",
+                "publicIndicator": "N",
+                "archiveIndicator": "N"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2020/summer.xml",
+                "id": "120205",
+                "label": "Summer 2020",
+                "publicIndicator": "Y",
+                "archiveIndicator": "N",
+                "attendingTerm": "Y",
+                "defaultTerm": "Y",
+                "enrollingTerm": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2020/spring.xml",
+                "id": "120201",
+                "label": "Spring 2020",
+                "publicIndicator": "Y",
+                "archiveIndicator": "N"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2020/winter.xml",
+                "id": "120200",
+                "label": "Winter 2020",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2019/fall.xml",
+                "id": "120198",
+                "label": "Fall 2019",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2019/summer.xml",
+                "id": "120195",
+                "label": "Summer 2019",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2019/spring.xml",
+                "id": "120191",
+                "label": "Spring 2019",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2019/winter.xml",
+                "id": "120190",
+                "label": "Winter 2019",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2018/fall.xml",
+                "id": "120188",
+                "label": "Fall 2018",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2018/summer.xml",
+                "id": "120185",
+                "label": "Summer 2018",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2018/spring.xml",
+                "id": "120181",
+                "label": "Spring 2018",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2018/winter.xml",
+                "id": "120180",
+                "label": "Winter 2018",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2017/fall.xml",
+                "id": "120178",
+                "label": "Fall 2017",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2017/summer.xml",
+                "id": "120175",
+                "label": "Summer 2017",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2017/spring.xml",
+                "id": "120171",
+                "label": "Spring 2017",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2017/winter.xml",
+                "id": "120170",
+                "label": "Winter 2017",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2016/fall.xml",
+                "id": "120168",
+                "label": "Fall 2016",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2016/summer.xml",
+                "id": "120165",
+                "label": "Summer 2016",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2016/spring.xml",
+                "id": "120161",
+                "label": "Spring 2016",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2016/winter.xml",
+                "id": "120160",
+                "label": "Winter 2016",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2015/fall.xml",
+                "id": "120158",
+                "label": "Fall 2015",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2015/summer.xml",
+                "id": "120155",
+                "label": "Summer 2015",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2015/spring.xml",
+                "id": "120151",
+                "label": "Spring 2015",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2015/winter.xml",
+                "id": "120150",
+                "label": "Winter 2015",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2014/fall.xml",
+                "id": "120148",
+                "label": "Fall 2014",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2014/summer.xml",
+                "id": "120145",
+                "label": "Summer 2014",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2014/spring.xml",
+                "id": "120141",
+                "label": "Spring 2014",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2013/fall.xml",
+                "id": "120138",
+                "label": "Fall 2013",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2013/summer.xml",
+                "id": "120135",
+                "label": "Summer 2013",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2013/spring.xml",
+                "id": "120131",
+                "label": "Spring 2013",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2012/fall.xml",
+                "id": "120128",
+                "label": "Fall 2012",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2012/summer.xml",
+                "id": "120125",
+                "label": "Summer 2012",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2012/spring.xml",
+                "id": "120121",
+                "label": "Spring 2012",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2011/fall.xml",
+                "id": "120118",
+                "label": "Fall 2011",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2011/summer.xml",
+                "id": "120115",
+                "label": "Summer 2011",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2011/spring.xml",
+                "id": "120111",
+                "label": "Spring 2011",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2010/fall.xml",
+                "id": "120108",
+                "label": "Fall 2010",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2010/summer.xml",
+                "id": "120105",
+                "label": "Summer 2010",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2010/spring.xml",
+                "id": "120101",
+                "label": "Spring 2010",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2009/fall.xml",
+                "id": "120098",
+                "label": "Fall 2009",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2009/summer.xml",
+                "id": "120095",
+                "label": "Summer 2009",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2009/spring.xml",
+                "id": "120091",
+                "label": "Spring 2009",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2008/fall.xml",
+                "id": "120088",
+                "label": "Fall 2008",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2008/summer.xml",
+                "id": "120085",
+                "label": "Summer 2008",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2008/spring.xml",
+                "id": "120081",
+                "label": "Spring 2008",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2007/fall.xml",
+                "id": "120078",
+                "label": "Fall 2007",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2007/summer.xml",
+                "id": "120075",
+                "label": "Summer 2007",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2007/spring.xml",
+                "id": "120071",
+                "label": "Spring 2007",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2006/fall.xml",
+                "id": "120068",
+                "label": "Fall 2006",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2006/summer.xml",
+                "id": "120065",
+                "label": "Summer 2006",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2006/spring.xml",
+                "id": "120061",
+                "label": "Spring 2006",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        [
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2005/fall.xml",
+                "id": "120058",
+                "label": "Fall 2005",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2005/summer.xml",
+                "id": "120055",
+                "label": "Summer 2005",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            },
+            {
+                "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2005/spring.xml",
+                "id": "120051",
+                "label": "Spring 2005",
+                "publicIndicator": "Y",
+                "archiveIndicator": "Y"
+            }
+        ],
+        {
+            "href": "https://courses.illinois.edu/cisapp/explorer/schedule/2004/fall.xml",
+            "id": "120048",
+            "label": "Fall 2004",
+            "publicIndicator": "Y",
+            "archiveIndicator": "Y"
+        }
+    ]
+}
