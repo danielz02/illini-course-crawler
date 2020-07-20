@@ -7,7 +7,7 @@ import {
     SubjectRoot,
     Department,
     SubjectDBRecord,
-    DepartmentDBRecord, Course, CourseDBRecord, Subject, GenEd
+    DepartmentDBRecord, Course, CourseDBRecord, Subject, GenEd, Section, SectionDBRecord
 } from "./types"
 import parser, { X2jOptionsOptional } from "fast-xml-parser";
 
@@ -36,7 +36,6 @@ export const fetchXML = async (url: string): Promise<any> => {
     }
 };
 
-
 /**
  * Request the root document of a certain term
  */
@@ -48,7 +47,7 @@ export const fetchTermRoot = async (): Promise<TermRoot> => {
 /**
  * Request the root document (academic years) of the entire course explorer and parse all the available terms into DB records
  */
-export const fetchTerms = async () => {
+export const fetchTerms = async (): Promise<TermDBRecord[] | null> => {
     const yearsEndpointUrl = "https://courses.illinois.edu/cisapp/explorer/schedule.xml?mode=summary";
     const yearsJson = await fetchXML(yearsEndpointUrl);
     return yearsJson ? parseCalendarYears(yearsJson) : null;
@@ -58,7 +57,7 @@ export const fetchTerms = async () => {
  * Parse Course Explorer's XML response into DB records from root level to terms.
  * @param years The Json Object converted from Course Explorer's XML response
  */
-export const parseCalendarYears = (years: YearsRoot): Array<TermDBRecord> => {
+export const parseCalendarYears = (years: YearsRoot): TermDBRecord[] => {
     const calendarYearsArr = years?.schedule.calendarYears.calendarYearSummary.map((year) => (
         year.terms.termDetail instanceof Array ? year.terms.termDetail : year.terms.termDetail
     ));
@@ -168,49 +167,57 @@ export const parseCourses = async (endpointUrl: string): Promise<Course[] | Cour
     }
     const subjectRoot: SubjectRoot = await fetchXML(endpointUrl);
     return subjectRoot.subject.cascadingCourses.cascadingCourse;
-}
+};
 
 /**
  * Fetch all the courses under all the subjects in a semester and parse them into DB records for later insertion
  * @param term Root of a term document
  */
-export const fetchCourses = async (term: TermRoot): Promise<(CourseDBRecord[] | CourseDBRecord)[]> => {
-    return Promise.all(
-        term.term.subjects.subject.map(async (subject: Subject) => {
-            const courseRoot = await parseCourses(`${subject.href}?mode=cascade`);
-            if (courseRoot instanceof Array) {
-                return Promise.all(
-                    courseRoot.map(async (course: Course) => {
-                        return {
-                            SubjectID: subject.id, // PK, FK
-                            TermID: course.parents.term.id, // PK, FK
-                            CourseID: Number.parseInt(course.id.split(" ")[1]), // PK
-                            CourseName: course.label,
-                            CourseDescription: course.description,
-                            CourseSectionInformation: course.classScheduleInformation,
-                            SectionDegreeAttributes: course.sectionDegreeAttributes,
-                            SectionRegistrationNotes: course.sectionRegistrationNotes,
-                            ClassScheduleInformation: course.classScheduleInformation,
-                            GenEdCategories: genEdStrBuilder(course.genEdCategories?.category)
-                        };
-                    })
-                );
-            } else {
-                return {
-                    SubjectID: subject.id, // PK, FK
-                    TermID: courseRoot.parents.term.id, // PK, FK
-                    CourseID: Number.parseInt(courseRoot.id.split(" ")[1]), // PK
-                    CourseName: courseRoot.label,
-                    CourseDescription: courseRoot.description,
-                    CourseSectionInformation: courseRoot.classScheduleInformation,
-                    SectionDegreeAttributes: courseRoot.sectionDegreeAttributes,
-                    SectionRegistrationNotes: courseRoot.sectionRegistrationNotes,
-                    ClassScheduleInformation: courseRoot.classScheduleInformation,
-                    GenEdCategories: genEdStrBuilder(courseRoot.genEdCategories?.category)
-                };
-            }
-        })
-    );
+export const fetchCourses = async (term: TermRoot): Promise<(CourseDBRecord[] | CourseDBRecord)[] | null> => {
+    try {
+        const allCourseInfo = await Promise.all(
+            term.term.subjects.subject.map(async (subject: Subject) => {
+                const courseRoot = await parseCourses(`${subject.href}?mode=cascade`);
+                if (courseRoot instanceof Array) {
+                    return await Promise.all(
+                        courseRoot.map(async (course: Course) => {
+                            return {
+                                SubjectID: subject.id, // PK, FK
+                                TermID: course.parents.term.id, // PK, FK
+                                CourseID: Number.parseInt(course.id.split(" ")[1]), // PK
+                                CourseName: course.label,
+                                CreditHours: course.creditHours,
+                                CourseDescription: course.description,
+                                CourseSectionInformation: course.classScheduleInformation,
+                                SectionDegreeAttributes: course.sectionDegreeAttributes,
+                                SectionRegistrationNotes: course.sectionRegistrationNotes,
+                                ClassScheduleInformation: course.classScheduleInformation,
+                                GenEdCategories: genEdStrBuilder(course.genEdCategories?.category)
+                            };
+                        })
+                    );
+                } else {
+                    return {
+                        SubjectID: subject.id, // PK, FK
+                        TermID: courseRoot.parents.term.id, // PK, FK
+                        CourseID: Number.parseInt(courseRoot.id.split(" ")[1]), // PK
+                        CourseName: courseRoot.label,
+                        CreditHours: courseRoot.creditHours,
+                        CourseDescription: courseRoot.description,
+                        CourseSectionInformation: courseRoot.classScheduleInformation,
+                        SectionDegreeAttributes: courseRoot.sectionDegreeAttributes,
+                        SectionRegistrationNotes: courseRoot.sectionRegistrationNotes,
+                        ClassScheduleInformation: courseRoot.classScheduleInformation,
+                        GenEdCategories: genEdStrBuilder(courseRoot.genEdCategories?.category)
+                    };
+                }
+            })
+        );
+        return allCourseInfo.flat(1);
+    } catch (e) {
+        console.error(`Error in fetching all the courses under ${term.term.label} : ${term.term.id}!`, e);
+        return null;
+    }
 };
 
 /**
@@ -230,12 +237,86 @@ export const genEdStrBuilder = (genEdInfo: GenEd | GenEd[] | undefined) => {
     return genEdCodes ? genEdCodes : null;
 };
 
-export const convertDBBulkInsertionRecord = (objectArray: any[] | null) => (
+/**
+ * Parse all the sections under a certain subject of a certain term.
+ * For example, all the sections of all CS courses in Summer 2020.
+ * @param endpointUrl The API endpoint, in cascade mode, of a certain subject
+ */
+export const parseSection = async (endpointUrl: string): Promise<Section | Section[] | null> => {
+    if (!endpointUrl.includes("?mode=cascade")) {
+        throw new Error("Must use cascade mode!");
+    }
+    try {
+        const subjectRoot: SubjectRoot = await fetchXML(endpointUrl);
+        const courseInfo = subjectRoot.subject.cascadingCourses.cascadingCourse;
+        return courseInfo instanceof Array ?
+            courseInfo.map(course => (course.detailedSections.detailedSection)).flat(1) :
+            courseInfo.detailedSections.detailedSection;
+    } catch (e) {
+        console.error(`Error in parsing the section information for ${endpointUrl}`);
+        return null;
+    }
+};
+
+/**
+ * Fetch all the sections of all the courses of a certain semester as Javascript Objects
+ * @param term The root of the term document as Object
+ */
+export const fetchSections = async (term: TermRoot): Promise<(Section | null)[] | null> => {
+    try {
+        const sectionInfo = await Promise.all(
+            term.term.subjects.subject.map(async (subject: Subject) => {
+                return await parseSection(`${subject.href}?mode=cascade`);
+            })
+        );
+        return sectionInfo.flat(1);
+    } catch (e) {
+        console.error(`Error in fetching sections of ${term.term.id}: ${term.term.label}!`);
+        return null;
+    }
+};
+
+export const fetchSectionDBRecords = async (term: TermRoot) => {
+    try {
+        const sectionInfo = await fetchSections(term); // flattened array of all sections
+        return sectionInfo?.flatMap(section => {
+            const sectionCreditMatch = section?.creditHours?.match(/[0-9]/g)?.[0];
+            const sectionCredit = sectionCreditMatch ? Number.parseInt(sectionCreditMatch) : null;
+            const startDate = section?.startDate ? new Date(section.startDate) : undefined;
+            const endDate = section?.endDate ? new Date(section.endDate) : undefined;
+            return {
+                CRN: section?.id, // PK
+                TermID: section?.parents.term.id, // PK, FK
+                CourseID: section?.parents.course.id, // FK, 411
+                SubjectID: section?.parents.subject.id, // FK, "CS"
+                SectionNumber: section?.sectionNumber ? section?.sectionNumber : null, // "AL1"
+                Credits: sectionCredit, // Parse from Section["creditHours"]
+                StatusCode: section?.statusCode,
+                PartOfTerm: section?.partOfTerm,
+                EnrollmentStatus: section?.enrollmentStatus,
+                SectionText: section?.sectionText, // This course will meet face-to-face at the Farm Credit Building in Sherman, IL
+                SectionNotes: section?.sectionNotes, // "Restricted to MBA: (PT) Business Adm -- UIUC or MBA: iMBA Online -UIUC.
+                SectionCappArea: section?.sectionCappArea,
+                StartDate: startDate,
+                EndDate: endDate,
+            }
+        });
+    } catch (e) {
+        console.error(`Error in fetching sections of ${term.term.id}: ${term.term.label}!`);
+        return null;
+    }
+
+}
+
+export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefined) => (
     objectArray ? objectArray.map(object => Object.values(object)) : null
 );
 
+// fetchTerms().then(terms => console.log(convertDBBulkInsertionRecord(terms)));
+// fetchTermRoot().then(subject => parseSubjects(subject).then(subject => console.log(convertDBBulkInsertionRecord(subject))));
+// fetchTermRoot().then(termRoot => fetchDepartments(termRoot).then(deptDbRecord => console.log(deptDbRecord)));
+// fetchTermRoot().then(termRoot => fetchCourses(termRoot).then(courses => console.log((courses))));
+// fetchTermRoot().then(termRoot => {
+//     fetchSectionDBRecords(termRoot).then(sections => { console.log(sections) });
+// });
 
-fetchTerms().then(terms => console.log(convertDBBulkInsertionRecord(terms)));
-fetchTermRoot().then(subject => parseSubjects(subject).then(subject => console.log(convertDBBulkInsertionRecord(subject))));
-fetchTermRoot().then(termRoot => fetchDepartments(termRoot).then(deptDbRecord => console.log(deptDbRecord)));
-fetchTermRoot().then(termRoot => fetchCourses(termRoot).then(courses => console.log(convertDBBulkInsertionRecord(courses.flat(1)))));

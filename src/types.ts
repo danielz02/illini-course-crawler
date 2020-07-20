@@ -10,7 +10,6 @@ export interface TermDBRecord {
     EnrollingTerm: boolean | null
 }
 
-
 export interface Term {
     href: string,
     id: string,
@@ -97,7 +96,7 @@ export interface SubjectRoot {
         webSiteURL: string,
         collegeDepartmentDescription: string,
         cascadingCourses: {
-            cascadingCourse: Course[]
+            cascadingCourse: Course[] | Course
         }
     }
 }
@@ -173,7 +172,10 @@ export interface Course {
     sectionDegreeAttributes: string | null, // GenEd description
     sectionRegistrationNotes: string | null,
     classScheduleInformation: string | null, // Usually information about linked sections
-    genEdCategories: { category: GenEd | GenEd[] } | null
+    genEdCategories: { category: GenEd | GenEd[] } | null,
+    detailedSections: {
+        detailedSection: Section | Section[]
+    }
 }
 
 export interface CourseDBRecord {
@@ -181,6 +183,7 @@ export interface CourseDBRecord {
     TermID: Course["parents"]["term"]["id"], // PK, FK
     CourseID: number, // PK
     CourseName: Course["label"],
+    CreditHours: Course["creditHours"],
     CourseDescription: Course["description"],
     CourseSectionInformation: Course["classScheduleInformation"],
     SectionDegreeAttributes: Course["sectionDegreeAttributes"],
@@ -198,6 +201,86 @@ export interface GenEd {
             code: string
         }
     }
+}
+
+export interface Section {
+    id: number, // CRN
+    href: string, // Section API Endpoint
+    parents: {
+        calendarYear: {
+            text: number, // Year
+            id: number, // Year
+            href: string
+        },
+        term: {
+            text: string, // TermName
+            id: number, // TermID
+            href: string
+        },
+        subject: {
+            text: string, // SubjectName
+            id: string, // SubjectID
+            href: string
+        },
+        course: {
+            text: string, // Course Name
+            id: number, // Course Numerical ID
+            href: string // Course API Endpoint
+        }
+    },
+    sectionNumber: string,
+    statusCode: string,
+    sectionText: string | null, // Usually instruction methods and fees
+    sectionNotes: string | null, // Usually restrictions
+    partOfTerm: string,
+    sectionStatusCode: string,
+    creditHours: string | null,
+    enrollmentStatus: string, // Open, Closed, Restricted, etc.
+    sectionCappArea: string | null,
+    startDate: string,
+    endDate: string,
+    meetings: {
+        meeting: Meeting | Meeting[]
+    }
+}
+
+export interface SectionDBRecord {
+    CRN: Section["id"] | undefined, // PK
+    TermID: Section["parents"]["term"]["id"] | undefined, // PK, FK
+    CourseID: Section["parents"]["course"]["id"] | undefined, // FK, 411
+    SubjectID: Section["parents"]["subject"]["id"] | undefined, // FK, "CS"
+    SectionNumber: Section["sectionNumber"] | undefined, // "AL1"
+    Credits: number | null, // Parse from Section["creditHours"]
+    StatusCode: Section["statusCode"] | undefined,
+    PartOfTerm: Section["partOfTerm"] | undefined,
+    EnrollmentStatus: Section["enrollmentStatus"] | undefined,
+    SectionText: Section["sectionText"] | undefined, // This course will meet face-to-face at the Farm Credit Building in Sherman, IL
+    SectionNotes: Section["sectionNotes"] | undefined, // "Restricted to MBA: (PT) Business Adm -- UIUC or MBA: iMBA Online -UIUC.
+    SectionCappArea: Section["sectionCappArea"] | undefined,
+    StartDate: Date | undefined,
+    EndDate: Date | undefined,
+}
+
+export interface Meeting {
+    id: number,
+    type: {
+        text: string, // "Lecture"
+        code: string // "LEC"
+    },
+    start: string, // "9:00AM"
+    end: string,
+    daysOfTheWeek: string, // "MWF"
+    roomNumber: number,
+    buildingName: number,
+    instructors: {
+        instructor: Instructor | Instructor[]
+    }
+}
+
+export interface Instructor {
+    text: string,
+    lastName: string,
+    firstName: string
 }
 
 

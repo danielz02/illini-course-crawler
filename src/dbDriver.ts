@@ -1,4 +1,6 @@
 import { ConnectionConfig, MysqlError, createConnection, FieldInfo } from "mysql";
+import { convertDBBulkInsertionRecord, fetchCourses, fetchSectionDBRecords, fetchTermRoot } from "./parser";
+import { SectionDBRecord } from "./types";
 
 const mysqlConnectionOption: ConnectionConfig = {
     // ssl: "Amazon RDS",
@@ -77,7 +79,14 @@ const bulkInsertCourses = (courses: any[][] | null) => {
         `INSERT INTO Courses VALUES ?`,
         courses
     ) : null;
-}
+};
+
+const bulkInsertSections = (sections: any[][] | null) => {
+    sections ? bulkInsertionQuery(
+        `INSERT INTO Sections VALUES ?`,
+        sections
+    ) : null;
+};
 
 // Connection Test
 // connection.connect(handleError);
@@ -94,7 +103,15 @@ const bulkInsertCourses = (courses: any[][] | null) => {
 //         .then(deptDbRecord => bulkInsertDepartments(convertDBBulkInsertionRecord(deptDbRecord))));
 
 // Populate Courses Table
-// fetchSubjects()
+// fetchTermRoot()
 //     .then(termRoot => fetchCourses(termRoot)
-//         .then(courses => bulkInsertCourses(convertDBBulkInsertionRecord(courses.flat(1)))));
+//         .then(courses => bulkInsertCourses(convertDBBulkInsertionRecord(courses))));
+
+// Populate Sections Table
+fetchTermRoot().then(termRoot => {
+    fetchSectionDBRecords(termRoot)
+        .then(sections => {
+            bulkInsertSections(convertDBBulkInsertionRecord(sections));
+        });
+});
 
