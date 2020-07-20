@@ -112,7 +112,10 @@ const bulkInsertSections = (sections: any[][] | null) => {
 // Populate Courses Table
 fetchTermRoot()
     .then(termRoot => fetchCourses(termRoot)
-        .then(courses => bulkInsertCourses(convertDBBulkInsertionRecord(courses))));
+        .then(courses => {
+            console.log(courses);
+            bulkInsertCourses(convertDBBulkInsertionRecord(courses));
+        }));
 
 // Populate Sections Table
 // fetchTermRoot().then(termRoot => {
