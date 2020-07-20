@@ -40,7 +40,7 @@ export const fetchXML = async (url: string): Promise<any> => {
  * Request the root document of a certain term
  */
 export const fetchTermRoot = async (): Promise<TermRoot> => {
-    const subjectsEndpointUrl = "https://courses.illinois.edu/cisapp/explorer/schedule/2020/summer.xml?mode=summary";
+    const subjectsEndpointUrl = "https://courses.illinois.edu/cisapp/explorer/schedule/2020/spring.xml?mode=summary";
     return await fetchXML(subjectsEndpointUrl);
 };
 
@@ -177,6 +177,7 @@ export const fetchCourses = async (term: TermRoot): Promise<(CourseDBRecord[] | 
     try {
         const allCourseInfo = await Promise.all(
             term.term.subjects.subject.map(async (subject: Subject) => {
+                console.log(`Fetching ${subject.id}: ${subject.text}`);
                 const courseRoot = await parseCourses(`${subject.href}?mode=cascade`);
                 if (courseRoot instanceof Array) {
                     return await Promise.all(

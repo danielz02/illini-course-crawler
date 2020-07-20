@@ -1,5 +1,11 @@
 import { ConnectionConfig, MysqlError, createConnection, FieldInfo } from "mysql";
-import { convertDBBulkInsertionRecord, fetchCourses, fetchSectionDBRecords, fetchTermRoot } from "./parser";
+import {
+    convertDBBulkInsertionRecord,
+    fetchCourses, fetchDepartments,
+    fetchSectionDBRecords,
+    fetchTermRoot,
+    parseSubjects
+} from "./parser";
 import { SectionDBRecord } from "./types";
 
 const mysqlConnectionOption: ConnectionConfig = {
@@ -75,6 +81,7 @@ const bulkInsertDepartments = (departments: any[][] | null) => {
 };
 
 const bulkInsertCourses = (courses: any[][] | null) => {
+    console.log("Bulk inserting courses");
     courses ? bulkInsertionQuery(
         `INSERT INTO Courses VALUES ?`,
         courses
@@ -93,25 +100,25 @@ const bulkInsertSections = (sections: any[][] | null) => {
 // connection.end();
 
 // Populate Subjects Table
-// fetchSubjects()
+// fetchTermRoot()
 //     .then(termRoot => parseSubjects(termRoot)
 //         .then(subjectsArr => bulkInsertSubjects(convertDBBulkInsertionRecord(subjectsArr))));
 
 // Populate Departments Table
-// fetchSubjects()
+// fetchTermRoot()
 //     .then(termRoot => fetchDepartments(termRoot)
 //         .then(deptDbRecord => bulkInsertDepartments(convertDBBulkInsertionRecord(deptDbRecord))));
 
 // Populate Courses Table
-// fetchTermRoot()
-//     .then(termRoot => fetchCourses(termRoot)
-//         .then(courses => bulkInsertCourses(convertDBBulkInsertionRecord(courses))));
+fetchTermRoot()
+    .then(termRoot => fetchCourses(termRoot)
+        .then(courses => bulkInsertCourses(convertDBBulkInsertionRecord(courses))));
 
 // Populate Sections Table
-fetchTermRoot().then(termRoot => {
-    fetchSectionDBRecords(termRoot)
-        .then(sections => {
-            bulkInsertSections(convertDBBulkInsertionRecord(sections));
-        });
-});
+// fetchTermRoot().then(termRoot => {
+//     fetchSectionDBRecords(termRoot)
+//         .then(sections => {
+//             bulkInsertSections(convertDBBulkInsertionRecord(sections));
+//         });
+// });
 
