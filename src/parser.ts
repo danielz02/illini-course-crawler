@@ -306,7 +306,20 @@ export const fetchSectionDBRecords = async (term: TermRoot) => {
         console.error(`Error in fetching sections of ${term.term.id}: ${term.term.label}!`);
         return null;
     }
+};
 
+export const parseMeetings = async (subjectRoot: SubjectRoot) => {
+    const subjectCourseInfo = subjectRoot.subject.cascadingCourses.cascadingCourse;
+    const meetingInfo = subjectCourseInfo instanceof Array ?
+        subjectCourseInfo.map(course => {
+            const sectionInfo: Section | Section[] = course.detailedSections.detailedSection;
+            return sectionInfo instanceof Array ?
+                sectionInfo.map(section => section.meetings.meeting) : sectionInfo.meetings
+        }) :
+        (subjectCourseInfo.detailedSections.detailedSection instanceof Array ?
+            subjectCourseInfo.detailedSections.detailedSection.map(section => section.meetings) :
+            subjectCourseInfo.detailedSections.detailedSection.meetings.meeting)
+    return meetingInfo instanceof Array ? meetingInfo.flat(1) : meetingInfo;
 }
 
 export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefined) => (
@@ -320,4 +333,8 @@ export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefin
 // fetchTermRoot().then(termRoot => {
 //     fetchSectionDBRecords(termRoot).then(sections => { console.log(sections) });
 // });
+fetchXML("https://courses.illinois.edu/cisapp/explorer/schedule/2020/summer/AAS.xml?mode=cascade").then(subject => {
+    parseMeetings(subject).then(meeting => console.log(meeting));
+});
+
 

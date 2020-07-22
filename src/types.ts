@@ -277,10 +277,26 @@ export interface Meeting {
     }
 }
 
+export interface MeetingDBRecord {
+    CRN: number,
+    TermID: number,
+    MeetingID: number
+    TypeCode: string,
+    StartTime: string,
+    EndTime: string,
+    DaysOfWeek: string,
+    BuildingName: string,
+    RoomNumber: number
+}
+
 export interface Instructor {
     text: string,
     lastName: string,
     firstName: string
+}
+
+export interface InstructorBDRecord {
+
 }
 
 
