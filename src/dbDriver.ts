@@ -1,12 +1,12 @@
 import { ConnectionConfig, MysqlError, createConnection, FieldInfo } from "mysql";
 import {
     convertDBBulkInsertionRecord,
-    fetchCourses, fetchDepartments,
+    fetchCourses, fetchDepartments, fetchInstructors, fetchMeetings,
     fetchSectionDBRecords,
     fetchTermRoot,
     parseSubjects
 } from "./parser";
-import { SectionDBRecord } from "./types";
+import {Meeting, SectionDBRecord} from "./types";
 
 const mysqlConnectionOption: ConnectionConfig = {
     // ssl: "Amazon RDS",
@@ -36,7 +36,7 @@ const handleResults = (row: any, index: number) => {
 };
 
 const connectionCleanup = () => {
-    console.log("Cleaning up socket connection");
+    console.log(`Cleaning up socket connection to ${process.env.MYSQL_WRITER_HOST}`);
     connection.end(handleError);
 }
 
@@ -95,6 +95,20 @@ const bulkInsertSections = (sections: any[][] | null) => {
     ) : null;
 };
 
+const bulkInsertMeetings = (meetings: any[][] | null) => {
+    meetings ? bulkInsertionQuery(
+        `INSERT INTO Meetings VALUES ?`,
+        meetings
+    ) : null;
+};
+
+const bulkInsertInstructors = (instructors: any[][] | null) => {
+    instructors ? bulkInsertionQuery(
+        `INSERT INTO Instructors VALUES ?`,
+        instructors
+    ) : null;
+};
+
 // Connection Test
 // connection.connect(handleError);
 // connection.end();
@@ -110,12 +124,12 @@ const bulkInsertSections = (sections: any[][] | null) => {
 //         .then(deptDbRecord => bulkInsertDepartments(convertDBBulkInsertionRecord(deptDbRecord))));
 
 // Populate Courses Table
-fetchTermRoot()
-    .then(termRoot => fetchCourses(termRoot)
-        .then(courses => {
-            console.log(courses);
-            bulkInsertCourses(convertDBBulkInsertionRecord(courses));
-        }));
+// fetchTermRoot()
+//     .then(termRoot => fetchCourses(termRoot)
+//         .then(courses => {
+//             console.log(courses);
+//             bulkInsertCourses(convertDBBulkInsertionRecord(courses));
+//         }));
 
 // Populate Sections Table
 // fetchTermRoot().then(termRoot => {
@@ -124,4 +138,14 @@ fetchTermRoot()
 //             bulkInsertSections(convertDBBulkInsertionRecord(sections));
 //         });
 // });
+
+// Populate Meetings Table
+// fetchTermRoot()
+//     .then(term => fetchMeetings(term)
+//         .then(meetings => bulkInsertMeetings(convertDBBulkInsertionRecord(meetings))));
+
+// Populate Instructor Table
+fetchTermRoot()
+    .then(term => fetchInstructors(term)
+        .then(instructors => bulkInsertInstructors(convertDBBulkInsertionRecord(instructors))));
 

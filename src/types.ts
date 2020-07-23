@@ -271,10 +271,16 @@ export interface Meeting {
     end: string,
     daysOfTheWeek: string, // "MWF"
     roomNumber: number,
-    buildingName: number,
+    buildingName: string,
     instructors: {
-        instructor: Instructor | Instructor[]
+        instructor: Instructor | Instructor[] | undefined
     }
+}
+
+export interface MeetingInfo {
+    crn: number,
+    termId: number,
+    meeting: Meeting
 }
 
 export interface MeetingDBRecord {
@@ -282,6 +288,7 @@ export interface MeetingDBRecord {
     TermID: number,
     MeetingID: number
     TypeCode: string,
+    TypeName: string,
     StartTime: string,
     EndTime: string,
     DaysOfWeek: string,
@@ -295,8 +302,23 @@ export interface Instructor {
     firstName: string
 }
 
-export interface InstructorBDRecord {
-
+export interface InstructorInfo {
+    crn: number,
+    termId: number,
+    meetingId: number,
+    fullName: string | undefined,
+    lastName: string | undefined,
+    firstName: string | undefined
 }
+
+export interface InstructorDBRecord {
+    CRN: number,
+    TermID: number,
+    MeetingID: number,
+    FullName: string | undefined,
+    LastName: string | undefined,
+    FirstName: string | undefined
+}
+
 
 

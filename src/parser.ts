@@ -7,7 +7,16 @@ import {
     SubjectRoot,
     Department,
     SubjectDBRecord,
-    DepartmentDBRecord, Course, CourseDBRecord, Subject, GenEd, Section, SectionDBRecord
+    DepartmentDBRecord,
+    Course,
+    CourseDBRecord,
+    Subject,
+    GenEd,
+    Section,
+    SectionDBRecord,
+    MeetingInfo,
+    Meeting,
+    Instructor, InstructorInfo, InstructorDBRecord
 } from "./types"
 import parser, { X2jOptionsOptional } from "fast-xml-parser";
 
@@ -40,7 +49,7 @@ export const fetchXML = async (url: string): Promise<any> => {
  * Request the root document of a certain term
  */
 export const fetchTermRoot = async (): Promise<TermRoot> => {
-    const subjectsEndpointUrl = "https://courses.illinois.edu/cisapp/explorer/schedule/2020/spring.xml?mode=summary";
+    const subjectsEndpointUrl = "https://courses.illinois.edu/cisapp/explorer/schedule/2020/summer.xml?mode=summary";
     return await fetchXML(subjectsEndpointUrl);
 };
 
@@ -308,18 +317,191 @@ export const fetchSectionDBRecords = async (term: TermRoot) => {
     }
 };
 
-export const parseMeetings = async (subjectRoot: SubjectRoot) => {
+export const parseMeetings = (subjectRoot: SubjectRoot) => {
     const subjectCourseInfo = subjectRoot.subject.cascadingCourses.cascadingCourse;
     const meetingInfo = subjectCourseInfo instanceof Array ?
-        subjectCourseInfo.map(course => {
+        subjectCourseInfo.flatMap(course => {
             const sectionInfo: Section | Section[] = course.detailedSections.detailedSection;
             return sectionInfo instanceof Array ?
-                sectionInfo.map(section => section.meetings.meeting) : sectionInfo.meetings
+                sectionInfo.flatMap(section => {
+                    const sectionMeetingInfo: Meeting | Meeting[] = section.meetings.meeting;
+                    return sectionMeetingInfo instanceof Array ?
+                        sectionMeetingInfo.map(meeting => (
+                            {
+                                crn: section.id,
+                                termId: section.parents.term.id,
+                                meeting: meeting
+                            })) :
+                        {
+                            crn: section.id,
+                            termId: section.parents.term.id,
+                            meeting: sectionMeetingInfo
+                        }
+                }) :
+                    (
+                        sectionInfo.meetings.meeting instanceof Array ?
+                            sectionInfo.meetings.meeting.map(meeting => (
+                                {
+                                    crn: sectionInfo.id,
+                                    termId: sectionInfo.parents.term.id,
+                                    meeting: meeting
+                                }
+                            )) :
+                            {
+                                crn: sectionInfo.id,
+                                termId: sectionInfo.parents.term.id,
+                                meeting: sectionInfo.meetings.meeting
+                            }
+                    )
         }) :
-        (subjectCourseInfo.detailedSections.detailedSection instanceof Array ?
-            subjectCourseInfo.detailedSections.detailedSection.map(section => section.meetings) :
-            subjectCourseInfo.detailedSections.detailedSection.meetings.meeting)
+        ((subjectCourseInfo.detailedSections.detailedSection) instanceof Array ?
+            subjectCourseInfo.detailedSections.detailedSection.flatMap(section => {
+                const meetingInfo: Meeting | Meeting[] = section.meetings.meeting;
+                return meetingInfo instanceof Array ?
+                    meetingInfo.map(meeting => (
+                        {
+                            crn: section.id,
+                            termId: section.parents.term.id,
+                            meeting: meeting
+                        }
+                    )) :
+                    {
+                        crn: section.id,
+                        termId: section.parents.term.id,
+                        meeting: meetingInfo
+                    }
+            }):
+            (subjectCourseInfo.detailedSections.detailedSection.meetings.meeting instanceof Array ?
+                    subjectCourseInfo.detailedSections.detailedSection.meetings.meeting.map(meeting => {
+                        const parentSectionInfo: Section = subjectCourseInfo.detailedSections.detailedSection as Section;
+                        return {
+                            crn: parentSectionInfo.id,
+                            termId: parentSectionInfo.parents.term.id,
+                            meeting: meeting,
+                        }
+                    }) :
+                    {
+                        crn: subjectCourseInfo.detailedSections.detailedSection.id,
+                        termId: subjectCourseInfo.detailedSections.detailedSection.parents.term.id,
+                        meeting: subjectCourseInfo.detailedSections.detailedSection.meetings.meeting,
+                    }
+            ));
     return meetingInfo instanceof Array ? meetingInfo.flat(1) : meetingInfo;
+};
+
+export const fetchMeetings = async (term: TermRoot) => {
+    try {
+        const termMeetingInfo = await Promise.all(term.term.subjects.subject.map(async subject => {
+            const subjectRoot: SubjectRoot = await fetchXML(`${subject.href}?mode=cascade`);
+            const subjectMeetingInfo = parseMeetings(subjectRoot);
+            if (subjectMeetingInfo instanceof Array) {
+                return subjectMeetingInfo.map(meeting => (
+                    {
+                        CRN: meeting.crn,
+                        TermID: meeting.termId,
+                        MeetingID: meeting.meeting.id,
+                        TypeCode: meeting.meeting.type.code,
+                        TypeName: meeting.meeting.type.text,
+                        StartTime: meeting.meeting.start,
+                        EndTime: meeting.meeting.end,
+                        DaysOfWeek: meeting.meeting.daysOfTheWeek,
+                        BuildingName: meeting.meeting.buildingName,
+                        RoomNumber: meeting.meeting.roomNumber
+                    }
+                ));
+            } else {
+                return {
+                    CRN: subjectMeetingInfo.crn,
+                    TermID: subjectMeetingInfo.termId,
+                    MeetingID: subjectMeetingInfo.meeting.id,
+                    TypeCode: subjectMeetingInfo.meeting.type.code,
+                    TypeName: subjectMeetingInfo.meeting.type.text,
+                    StartTime: subjectMeetingInfo.meeting.start,
+                    EndTime: subjectMeetingInfo.meeting.end,
+                    DaysOfWeek: subjectMeetingInfo.meeting.daysOfTheWeek,
+                    BuildingName: subjectMeetingInfo.meeting.buildingName,
+                    RoomNumber: subjectMeetingInfo.meeting.roomNumber
+                }
+            }
+        }))
+        return termMeetingInfo.flat(1);
+    } catch (e) {
+        console.error("Error in fetching meeting information!");
+        return null;
+    }
+};
+
+export const parseInstructors = (subject: SubjectRoot): InstructorInfo | InstructorInfo[] => {
+    const meetingInfo = parseMeetings(subject);
+    if (meetingInfo instanceof Array) {
+        const subjectInstructors = meetingInfo.flatMap(meeting => {
+            const instructorInformation: Instructor | Instructor[] | undefined = meeting.meeting.instructors.instructor;
+            return instructorInformation instanceof Array ?
+                instructorInformation.flatMap(instructor => (
+                    {
+                        crn: meeting.crn,
+                        termId: meeting.termId,
+                        meetingId: meeting.meeting.id,
+                        fullName: instructor.text,
+                        lastName: instructor.lastName,
+                        firstName: instructor.firstName
+                    }
+                )) :
+                {
+                    crn: meeting.crn,
+                    termId: meeting.termId,
+                    meetingId: meeting.meeting.id,
+                    fullName: instructorInformation?.text,
+                    lastName: instructorInformation?.lastName,
+                    firstName: instructorInformation?.firstName
+                }
+        });
+        return subjectInstructors.flat(1);
+    } else {
+        const instructorInformation: Instructor | Instructor[] | undefined = meetingInfo.meeting.instructors.instructor;
+        const subjectInstructors = instructorInformation instanceof Array ?
+            instructorInformation.flatMap(instructor => (
+                {
+                    crn: meetingInfo.crn,
+                    termId: meetingInfo.termId,
+                    meetingId: meetingInfo.meeting.id,
+                    fullName: instructor.text,
+                    lastName: instructor.lastName,
+                    firstName: instructor.firstName
+                }
+            )) :
+            {
+                crn: meetingInfo.crn,
+                termId: meetingInfo.termId,
+                meetingId: meetingInfo.meeting.id,
+                fullName: instructorInformation?.text,
+                lastName: instructorInformation?.lastName,
+                firstName: instructorInformation?.firstName
+            };
+        return subjectInstructors instanceof Array ? subjectInstructors.flat(1) : subjectInstructors;
+    }
+};
+
+export const fetchInstructors = async (term: TermRoot): Promise<InstructorDBRecord[] | null> => {
+    try {
+        const termInstructors = await Promise.all(term.term.subjects.subject.map(async subject => {
+            const subjectRoot: SubjectRoot = await fetchXML(`${subject.href}?mode=cascade`);
+            return parseInstructors(subjectRoot);
+        }));
+        return termInstructors.flat(1).map(instructor => (
+            {
+                CRN: instructor.crn,
+                TermID: instructor.termId,
+                MeetingID: instructor.meetingId,
+                FullName: instructor.fullName,
+                LastName: instructor.lastName,
+                FirstName: instructor.firstName
+            }
+        ));
+    } catch (e) {
+        console.error(`Error in fetching instructor information for ${term.term.label}: ${term.term.id}`, e);
+        return null;
+    }
 }
 
 export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefined) => (
@@ -333,8 +515,11 @@ export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefin
 // fetchTermRoot().then(termRoot => {
 //     fetchSectionDBRecords(termRoot).then(sections => { console.log(sections) });
 // });
-fetchXML("https://courses.illinois.edu/cisapp/explorer/schedule/2020/summer/AAS.xml?mode=cascade").then(subject => {
-    parseMeetings(subject).then(meeting => console.log(meeting));
-});
+// fetchTermRoot()
+//     .then(term => fetchMeetings(term).then(meetings => console.log(convertDBBulkInsertionRecord(meetings))));
+
+// fetchTermRoot()
+//     .then(term => fetchInstructors(term)
+//         .then(instructors => console.log(instructors)));
 
 
