@@ -48,9 +48,8 @@ export const fetchXML = async (url: string): Promise<any> => {
 /**
  * Request the root document of a certain term
  */
-export const fetchTermRoot = async (): Promise<TermRoot> => {
-    const subjectsEndpointUrl = "https://courses.illinois.edu/cisapp/explorer/schedule/2020/summer.xml?mode=summary";
-    return await fetchXML(subjectsEndpointUrl);
+export const fetchTermRoot = async (rootUrl: string): Promise<TermRoot> => {
+    return await fetchXML(rootUrl);
 };
 
 /**
@@ -402,8 +401,8 @@ export const fetchMeetings = async (term: TermRoot) => {
                         MeetingID: meeting.meeting.id,
                         TypeCode: meeting.meeting.type.code,
                         TypeName: meeting.meeting.type.text,
-                        StartTime: meeting.meeting.start,
-                        EndTime: meeting.meeting.end,
+                        StartTime: convertFrom12To24Format(meeting.meeting.start),
+                        EndTime: convertFrom12To24Format(meeting.meeting.end),
                         DaysOfWeek: meeting.meeting.daysOfTheWeek,
                         BuildingName: meeting.meeting.buildingName,
                         RoomNumber: meeting.meeting.roomNumber
@@ -416,8 +415,8 @@ export const fetchMeetings = async (term: TermRoot) => {
                     MeetingID: subjectMeetingInfo.meeting.id,
                     TypeCode: subjectMeetingInfo.meeting.type.code,
                     TypeName: subjectMeetingInfo.meeting.type.text,
-                    StartTime: subjectMeetingInfo.meeting.start,
-                    EndTime: subjectMeetingInfo.meeting.end,
+                    StartTime: convertFrom12To24Format(subjectMeetingInfo.meeting.start),
+                    EndTime: convertFrom12To24Format(subjectMeetingInfo.meeting.end),
                     DaysOfWeek: subjectMeetingInfo.meeting.daysOfTheWeek,
                     BuildingName: subjectMeetingInfo.meeting.buildingName,
                     RoomNumber: subjectMeetingInfo.meeting.roomNumber
@@ -502,24 +501,35 @@ export const fetchInstructors = async (term: TermRoot): Promise<InstructorDBReco
         console.error(`Error in fetching instructor information for ${term.term.label}: ${term.term.id}`, e);
         return null;
     }
-}
+};
+
+const convertFrom12To24Format = (time12: string | null) => {
+    const matchString = time12?.match(/([0-9]{1,2}):([0-9]{2}) (AM|PM)/)?.slice(1);
+    if (matchString) {
+        const [sHours, minutes, period] = matchString;
+        const PM = period === 'PM';
+        const hours = (+sHours % 12) + (PM ? 12 : 0);
+        return `${('0' + hours).slice(-2)}:${minutes}`;
+    } else {
+        return null;
+    }
+};
 
 export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefined) => (
     objectArray ? objectArray.map(object => Object.values(object)) : null
 );
 
-// fetchTerms().then(terms => console.log(convertDBBulkInsertionRecord(terms)));
-// fetchTermRoot().then(subject => parseSubjects(subject).then(subject => console.log(convertDBBulkInsertionRecord(subject))));
-// fetchTermRoot().then(termRoot => fetchDepartments(termRoot).then(deptDbRecord => console.log(deptDbRecord)));
-// fetchTermRoot().then(termRoot => fetchCourses(termRoot).then(courses => console.log((courses))));
-// fetchTermRoot().then(termRoot => {
+// const rootUrl = "https://courses.illinois.edu/cisapp/explorer/schedule/2020/spring.xml?mode=summary";
+// fetchTerms(rootUrl).then(terms => console.log(convertDBBulkInsertionRecord(terms)));
+// fetchTermRoot(rootUrl).then(subject => parseSubjects(subject).then(subject => console.log(convertDBBulkInsertionRecord(subject))));
+// fetchTermRoot(rootUrl).then(termRoot => fetchDepartments(termRoot).then(deptDbRecord => console.log(deptDbRecord)));
+// fetchTermRoot(rootUrl).then(termRoot => fetchCourses(termRoot).then(courses => console.log((courses))));
+// fetchTermRoot(rootUrl).then(termRoot => {
 //     fetchSectionDBRecords(termRoot).then(sections => { console.log(sections) });
 // });
-// fetchTermRoot()
+// fetchTermRoot(rootUrl)
 //     .then(term => fetchMeetings(term).then(meetings => console.log(convertDBBulkInsertionRecord(meetings))));
 
-// fetchTermRoot()
+// fetchTermRoot(rootUrl)
 //     .then(term => fetchInstructors(term)
 //         .then(instructors => console.log(instructors)));
-
-

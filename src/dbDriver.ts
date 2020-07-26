@@ -6,7 +6,7 @@ import {
     fetchTermRoot,
     parseSubjects
 } from "./parser";
-import {Meeting, SectionDBRecord} from "./types";
+import {Meeting, SectionDBRecord, TermRoot} from "./types";
 
 const mysqlConnectionOption: ConnectionConfig = {
     // ssl: "Amazon RDS",
@@ -37,11 +37,10 @@ const handleResults = (row: any, index: number) => {
 
 const connectionCleanup = () => {
     console.log(`Cleaning up socket connection to ${process.env.MYSQL_WRITER_HOST}`);
-    connection.end(handleError);
+    // connection.end(handleError);
 }
 
 const bulkInsertionQuery = (query: string, insertionRecords: any[]) => {
-    // connection.query(`USE illini_db`, handleError);
     connection
         .query(
             query,
@@ -109,6 +108,47 @@ const bulkInsertInstructors = (instructors: any[][] | null) => {
     ) : null;
 };
 
+const writeAll = async (termRootUrl: string) => {
+    try {
+        const termRootDocument: TermRoot = await fetchTermRoot(termRootUrl);
+        const allData = await Promise.all([
+            // Populate Subjects Table
+            parseSubjects(termRootDocument),
+            fetchDepartments(termRootDocument),
+            fetchCourses(termRootDocument),
+            fetchSectionDBRecords(termRootDocument),
+            fetchMeetings(termRootDocument),
+            fetchInstructors(termRootDocument)
+        ]);
+        const bulkInsertionRecords = allData.map(record => convertDBBulkInsertionRecord(record));
+        connection.beginTransaction(err => {
+            if (err) {
+                connection.rollback();
+                handleError(err);
+            }
+            bulkInsertSubjects(bulkInsertionRecords[0]);
+            bulkInsertDepartments(bulkInsertionRecords[1]);
+            bulkInsertCourses(bulkInsertionRecords[2]);
+            bulkInsertSections(bulkInsertionRecords[3]);
+            bulkInsertMeetings(bulkInsertionRecords[4]);
+            bulkInsertInstructors(bulkInsertionRecords[5]);
+            connection.commit(err => {
+                if (err) {
+                    return connection.rollback(err => {
+                        throw err
+                    });
+                }
+                console.log("Transaction committed!");
+                connection.end(handleError);
+            });
+        })
+    } catch (e) {
+        console.error(`Error in writing course data for ${termRootUrl}`, e);
+    }
+};
+
+writeAll("https://courses.illinois.edu/cisapp/explorer/schedule/2019/fall.xml?mode=summary").then();
+
 // Connection Test
 // connection.connect(handleError);
 // connection.end();
@@ -145,7 +185,7 @@ const bulkInsertInstructors = (instructors: any[][] | null) => {
 //         .then(meetings => bulkInsertMeetings(convertDBBulkInsertionRecord(meetings))));
 
 // Populate Instructor Table
-fetchTermRoot()
-    .then(term => fetchInstructors(term)
-        .then(instructors => bulkInsertInstructors(convertDBBulkInsertionRecord(instructors))));
+// fetchTermRoot()
+//     .then(term => fetchInstructors(term)
+//         .then(instructors => bulkInsertInstructors(convertDBBulkInsertionRecord(instructors))));
 
