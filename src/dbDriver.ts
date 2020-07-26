@@ -147,7 +147,62 @@ const writeAll = async (termRootUrl: string) => {
     }
 };
 
-writeAll("https://courses.illinois.edu/cisapp/explorer/schedule/2019/fall.xml?mode=summary").then();
+const terms = [
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2004/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2005/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2005/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2005/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2006/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2006/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2006/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2007/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2007/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2007/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2008/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2008/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2008/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2009/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2009/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2009/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2010/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2010/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2010/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2011/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2011/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2011/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2012/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2012/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2012/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2013/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2013/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2013/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2014/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2014/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2014/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2015/winter.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2015/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2015/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2015/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2016/winter.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2016/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2016/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2016/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2017/winter.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2017/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2017/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2017/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2018/winter.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2018/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2018/summer.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2018/fall.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2019/winter.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2019/spring.xml",
+    "https://courses.illinois.edu/cisapp/explorer/schedule/2019/summer.xml",
+]
+
+for (const url of terms) {
+    writeAll(`${url}?mode=summary`).then();
+}
 
 // Connection Test
 // connection.connect(handleError);
