@@ -320,5 +320,42 @@ export interface InstructorDBRecord {
     FirstName: string | undefined
 }
 
+export interface InstructorRating {
+    average_ratings: number,
+    teacher_id: number,
+    number_of_ratings: number,
+    school_id: string,
+    first_name: string,
+    last_name: string
+}
 
+export interface InstructorProfile {
+    __typename: string,
+    firstName: string,
+    id: string,
+    lastName: string,
+    legacyId: number,
+    numRatings: number,
+    ratings: {
+        edges: { "node": Comment }[]
+    },
+    school: {
+        id: string,
+        name: string
+    }
+}
 
+export interface Comment {
+    attendanceMandatory: string,
+    clarityRating: number,
+    class: string,
+    comment: string,
+    date: string,
+    difficultyRating: number,
+    grade: string,
+    helpfulRating: number,
+    isForCredit: boolean,
+    isForOnlineClass: boolean,
+    ratingTags: string,
+    wouldTakeAgain: boolean | undefined
+}

@@ -1,24 +1,27 @@
 import fetch from "node-fetch";
 import {
-    TermDBRecord,
-    Term,
-    YearsRoot,
-    TermRoot,
-    SubjectRoot,
-    Department,
-    SubjectDBRecord,
-    DepartmentDBRecord,
     Course,
     CourseDBRecord,
-    Subject,
+    Department,
+    DepartmentDBRecord,
     GenEd,
-    Section,
-    SectionDBRecord,
-    MeetingInfo,
+    Instructor,
+    InstructorDBRecord,
+    InstructorInfo, InstructorProfile,
+    InstructorRating,
     Meeting,
-    Instructor, InstructorInfo, InstructorDBRecord
+    Section,
+    Subject,
+    SubjectDBRecord,
+    SubjectRoot,
+    Term,
+    TermDBRecord,
+    TermRoot,
+    YearsRoot
 } from "./types"
-import parser, { X2jOptionsOptional } from "fast-xml-parser";
+import ratings from "./../res/rmp_ratings.json";
+import comments from "./../res/rmp_comments.json"
+import parser, {X2jOptionsOptional} from "fast-xml-parser";
 
 const xmlParserOption: X2jOptionsOptional = {
     attributeNamePrefix: "",
@@ -515,6 +518,27 @@ const convertFrom12To24Format = (time12: string | null) => {
     }
 };
 
+export const parseRatings = () => {
+    const instructorProfiles: InstructorRating[] = ratings
+    return instructorProfiles.flatMap(instructor => (
+        [
+            {
+                "index": {
+                    "_index": "ratings",
+                    "_id": instructor.teacher_id
+                }
+            },
+            {
+                "teacherID": instructor.teacher_id,
+                "numRatings": instructor.number_of_ratings,
+                "firstName": instructor.first_name,
+                "lastName": instructor.last_name,
+                "avgRating": instructor.average_ratings
+            }
+        ]
+    ));
+}
+
 export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefined) => (
     objectArray ? objectArray.map(object => Object.values(object)) : null
 );
@@ -533,3 +557,4 @@ export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefin
 // fetchTermRoot(rootUrl)
 //     .then(term => fetchInstructors(term)
 //         .then(instructors => console.log(instructors)));
+// console.log(parseRatings());

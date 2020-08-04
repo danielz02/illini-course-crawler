@@ -3,7 +3,7 @@ import {
     convertDBBulkInsertionRecord,
     fetchCourses, fetchDepartments, fetchInstructors, fetchMeetings,
     fetchSectionDBRecords,
-    fetchTermRoot,
+    fetchTermRoot, parseRatings,
     parseSubjects
 } from "./parser";
 import {Meeting, SectionDBRecord, TermRoot} from "./types";
@@ -108,6 +108,13 @@ const bulkInsertInstructors = (instructors: any[][] | null) => {
     ) : null;
 };
 
+const bulkInsertRatings = (ratings: unknown[][] | null) => {
+    ratings ? bulkInsertionQuery(
+        "INSERT INTO Ratings VALUES ?",
+        ratings
+    ) : null
+};
+
 const writeAll = async (termRootUrl: string) => {
     try {
         const termRootDocument: TermRoot = await fetchTermRoot(termRootUrl);
@@ -200,9 +207,9 @@ const terms = [
     "https://courses.illinois.edu/cisapp/explorer/schedule/2019/summer.xml",
 ]
 
-for (const url of terms) {
-    writeAll(`${url}?mode=summary`).then();
-}
+// for (const url of terms) {
+//     writeAll(`${url}?mode=summary`).then();
+// }
 
 // Connection Test
 // connection.connect(handleError);
@@ -243,4 +250,6 @@ for (const url of terms) {
 // fetchTermRoot()
 //     .then(term => fetchInstructors(term)
 //         .then(instructors => bulkInsertInstructors(convertDBBulkInsertionRecord(instructors))));
+
+// bulkInsertRatings(convertDBBulkInsertionRecord(parseRatings()))
 

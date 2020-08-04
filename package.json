@@ -15,15 +15,19 @@
     "author": "Chenhui Zhang",
     "license": "ISC",
     "devDependencies": {
+        "@types/elasticsearch": "^5.0.36",
         "@types/mysql": "^2.15.15",
         "@types/node": "^14.0.13",
         "@types/node-fetch": "^2.5.7",
         "@types/xml2js": "^0.4.5",
+        "aws-elasticsearch-connector": "^9.0.0",
         "ts-node-dev": "^1.0.0-pre.49",
         "tslint": "^6.1.2",
         "typescript": "^3.9.5"
     },
     "dependencies": {
+        "@elastic/elasticsearch": "^7.8.0",
+        "aws-sdk": "^2.726.0",
         "fast-xml-parser": "^3.17.4",
         "mysql": "^2.18.1",
         "node-fetch": "^2.6.0",
