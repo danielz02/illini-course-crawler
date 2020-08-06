@@ -119,3 +119,7 @@ dist
 .yarn/build-state.yml
 .pnp.*
 
+/src/esDriver.js
+/src/dbDriver.js
+/src/parser.js
+/src/types.js
