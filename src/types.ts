@@ -357,5 +357,5 @@ export interface Comment {
     isForCredit: boolean,
     isForOnlineClass: boolean,
     ratingTags: string,
-    wouldTakeAgain: boolean | undefined
+    wouldTakeAgain: number | undefined
 }

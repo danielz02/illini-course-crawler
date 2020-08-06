@@ -3,7 +3,7 @@ import {
     convertDBBulkInsertionRecord,
     fetchCourses, fetchDepartments, fetchInstructors, fetchMeetings,
     fetchSectionDBRecords,
-    fetchTermRoot, parseRatings,
+    fetchTermRoot, parseComments, parseRatings,
     parseSubjects
 } from "./parser";
 import {Meeting, SectionDBRecord, TermRoot} from "./types";
@@ -112,6 +112,15 @@ const bulkInsertRatings = (ratings: unknown[][] | null) => {
     ratings ? bulkInsertionQuery(
         "INSERT INTO Ratings VALUES ?",
         ratings
+    ) : null
+};
+
+const bulkInsertComments = (comments: unknown[][] | null) => {
+    comments ? bulkInsertionQuery(
+        "INSERT INTO Comments (ID, LegacyID, FirstName, LastName, Class, Tags, IsAttendanceMandatory, Clarity," +
+        "DifficultyRating, HelpfulRating, WouldTakeAgain, IsForCredit, IsOnline, Grade, Comment, Date)" +
+        "VALUES ?",
+        comments
     ) : null
 };
 
@@ -252,4 +261,5 @@ const terms = [
 //         .then(instructors => bulkInsertInstructors(convertDBBulkInsertionRecord(instructors))));
 
 // bulkInsertRatings(convertDBBulkInsertionRecord(parseRatings()))
-
+// convertDBBulkInsertionRecord(parseRatings())
+bulkInsertComments(convertDBBulkInsertionRecord(parseComments()));

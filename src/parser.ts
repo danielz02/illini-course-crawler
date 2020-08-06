@@ -519,7 +519,7 @@ const convertFrom12To24Format = (time12: string | null) => {
 };
 
 export const parseRatings = () => {
-    const instructorProfiles: InstructorRating[] = ratings
+    const instructorProfiles: InstructorRating[] = ratings;
     return instructorProfiles.flatMap(instructor => (
         [
             {
@@ -533,11 +533,67 @@ export const parseRatings = () => {
                 "numRatings": instructor.number_of_ratings,
                 "firstName": instructor.first_name,
                 "lastName": instructor.last_name,
+                "fullName": `${instructor.first_name} ${instructor.last_name}`,
                 "avgRating": instructor.average_ratings
             }
         ]
     ));
-}
+};
+
+export const parseComments = () => {
+    const commentInfo: any = comments;
+    const instructorComments: InstructorProfile[] = commentInfo.comment_by_instructor;
+    return instructorComments.flatMap(instructor => (
+        instructor.ratings.edges.flatMap(comment => (
+            {
+                ID: instructor.id,
+                LegacyID: instructor.legacyId,
+                FirstName: instructor.firstName,
+                LastName: instructor.lastName,
+                Class: comment.node.class,
+                Tags: comment.node.ratingTags,
+                IsAttendanceMandatory: comment.node.attendanceMandatory,
+                Clarity: comment.node.clarityRating,
+                DifficultyRating: comment.node.difficultyRating,
+                HelpfulRating: comment.node.helpfulRating,
+                WouldTakeAgain: comment.node.wouldTakeAgain,
+                IsForCredit: comment.node.isForCredit,
+                IsOnline: comment.node.isForOnlineClass,
+                Grade: comment.node.grade,
+                Comment: comment.node.comment,
+                Date: comment.node.date
+            }
+        ))
+    ));
+};
+
+export const parseCommentsToEsDocuments = () => {
+    const commentInfo: any = comments;
+    const instructorComments: InstructorProfile[] = commentInfo.comment_by_instructor;
+    return instructorComments.flatMap(instructor => (
+        instructor.ratings.edges.flatMap(comment => (
+            {
+                id: instructor.id,
+                legacyID: instructor.legacyId,
+                firstName: instructor.firstName,
+                lastName: instructor.lastName,
+                fullName: `${instructor.firstName} ${instructor.lastName}`,
+                class: comment.node.class,
+                tags: comment.node.ratingTags,
+                isAttendanceMandatory: comment.node.attendanceMandatory === "mandatory",
+                clarity: comment.node.clarityRating,
+                difficultyRating: comment.node.difficultyRating,
+                helpfulRating: comment.node.helpfulRating,
+                wouldTakeAgain: comment.node.wouldTakeAgain === 1,
+                isForCredit: comment.node.isForCredit,
+                isOnline: comment.node.isForOnlineClass,
+                grade: comment.node.grade,
+                comment: comment.node.comment,
+                date: (new Date(comment.node.date)).toISOString()
+            }
+        ))
+    ));
+};
 
 export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefined) => (
     objectArray ? objectArray.map(object => Object.values(object)) : null
@@ -558,3 +614,8 @@ export const convertDBBulkInsertionRecord = (objectArray: any[] | null | undefin
 //     .then(term => fetchInstructors(term)
 //         .then(instructors => console.log(instructors)));
 // console.log(parseRatings());
+
+// import { promises as fsPromises } from 'fs';
+// fsPromises.writeFile("./parsed-ratings.json", JSON.stringify(parseRatings())).then(r => console.log(r));
+
+// console.log(convertDBBulkInsertionRecord(parseComments()));

@@ -1,18 +1,17 @@
 import { Client } from "@elastic/elasticsearch";
-import AWS from "aws-sdk";
-
-AWS.config.update
-
+import {parseCommentsToEsDocuments} from "./parser";
 
 const client = new Client({ node: process.env.ES_ENDPOINT});
-// callback API
-client.search({
-    index: 'my-index',
-    body: {
-        query: {
-            match: { hello: 'world' }
-        }
+
+const bulkInsertComments = async () => {
+    try {
+        const comments = parseCommentsToEsDocuments();
+        const body = comments.flatMap(doc => [{ index: { _index: 'comments' } }, doc]);
+        const { body: bulkResponse } = await client.bulk({ body });
+        return bulkResponse
+    } catch (e) {
+        console.error("Error in inserting comments", e);
     }
-}, (err, result) => {
-    if (err) console.log(err)
-})
+};
+
+bulkInsertComments().then(r => console.log(r?.items?.[0]?.index?.error));
